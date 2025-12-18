@@ -10,18 +10,19 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 
 # Config
-N = 10000
+N = 1
 mp.dps = 50
 
 class FunctionTester:
 
-    def __init__(self, a: float, b: float, name: str, source_path: str):
+    def __init__(self, a: float, b: float, name: str, source_path: str, cmake_used: bool):
         self.a = float(a)
         self.b = float(b)
         self.name = name
         self.source_path = source_path
+        self.cmake_used = cmake_used
 
-    def compile_src(self):
+    def compile_src_from_cpp(self):
         result = subprocess.run([
             'clang++', '-o', './bin/' + f'{self.name}',
             '-std=c++11',
@@ -34,17 +35,39 @@ class FunctionTester:
 
         print(f"{self.name} compilation succeed")
 
-    def run_binary(self):
-
-        result = subprocess.run([
-            './bin/' + f'{self.name}'
-            ], capture_output=True, text=True)
+    def compile_src_from_cmake(self):
+        build_path = self.source_path
+        result = subprocess.run(["cmake", "--build", build_path], check=True)
 
         if result.stderr:
             print("Error:", result.stderr)
             sys.exit(1)
 
-        print(f"{self.name} run succeed")
+        print(f"{self.name} compilation succeed")
+
+    def run_binary(self):
+
+        if self.cmake_used:
+            result = subprocess.run([
+            './src/' + f'{self.name}' + '/build/app'
+            ], capture_output=True, text=True)
+
+            if result.stderr:
+                print("Error:", result.stderr)
+                sys.exit(1)
+
+            print(f"{self.name} run succeed")
+        else:
+            result = subprocess.run([
+            './bin/' + f'{self.name}'
+            ], capture_output=True, text=True)
+
+            if result.stderr:
+                print("Error:", result.stderr)
+                sys.exit(1)
+
+            print(f"{self.name} run succeed")
+
         
     def read_points_from_file(self):
         file_path = os.path.join('..', 'points', 'output.txt')
@@ -156,7 +179,10 @@ class FunctionTester:
         print("Start testing " + self.name)
 
         # source code compilation
-        self.compile_src()
+        if self.cmake_used:
+            self.compile_src_from_cmake()
+        else:
+            self.compile_src_from_cpp()
 
         # points generation
         points = self.generate_points()
@@ -168,10 +194,12 @@ class FunctionTester:
         self.save_results(points,  comp_values, target_values)
 
 # List of all available functions
-series_0_3 = FunctionTester(0, 3, "series_0_3", "./src/series_0_3.cpp")
+series_0_3 = FunctionTester(0, 3, "series_0_3", "./src/series_0_3.cpp", False)
+series_0_3_new = FunctionTester(0, 3, "series_0_3_new", "./src/series_0_3_new.cpp", False)
+series_3_inf = FunctionTester(3, 1000000, "series_3_inf", "./src/series_3_inf/build", True)
 
 # Initialization testing
 def main():
-    series_0_3.test()
+    series_3_inf.test()
 
 main()

@@ -3,6 +3,9 @@
 #include <vector>
 #include <cmath>
 
+// This number gives high precision without any extra libraries included
+const double PI = 3.14159265358979323846;
+
 double struve_0_3(double x, const std::vector<double>& coeff) {
     
     std::vector<double> terms;
