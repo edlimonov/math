@@ -5,6 +5,11 @@
 #  pragma once
 #endif
 
+#include <boost/math/tools/config.hpp>
+#include <boost/math/special_functions/detail/struve_hn.hpp>
+#include <boost/math/policies/error_handling.hpp>
+#include <boost/math/special_functions/math_fwd.hpp>
+
 namespace boost{ namespace math{
 
 namespace detail{
@@ -12,7 +17,6 @@ namespace detail{
 template <class T, class Policy>
 BOOST_MATH_GPU_ENABLED inline T struve_h_imp(int v, T x, const bessel_int_tag&, const Policy& pol)
 {
-   BOOST_MATH_STD_USING
    return struve_hn(v, x, pol);
 }
 
@@ -31,6 +35,7 @@ BOOST_MATH_GPU_ENABLED inline typename detail::bessel_traits<T1, T2, Policy>::re
       policies::promote_double<false>,
       policies::discrete_quantile<>,
       policies::assert_undefined<> >::type forwarding_policy;
+
    return policies::checked_narrowing_cast<result_type, Policy>(detail::struve_h_imp<value_type>(v, static_cast<value_type>(x), tag_type(), forwarding_policy()), "boost::math::struve_h<%1%>(%1%,%1%)");
 }
 

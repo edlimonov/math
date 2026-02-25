@@ -5,12 +5,16 @@
 #pragma once
 #endif
 
+#include <boost/math/tools/assert.hpp>
+#include </Users/nailzaripov/boost/boost/math/special_functions/detail/struve_h0.hpp>
+#include </Users/nailzaripov/boost/boost/math/special_functions/detail/struve_h1.hpp>
+
 namespace boost { namespace math { namespace detail{
 
 template <typename T, typename Policy>
 BOOST_MATH_GPU_ENABLED T struve_hn(int n, T x, const Policy& pol)
 {
-    T value(0), factor, current, prev, next;
+    T value(0), factor;
 
     BOOST_MATH_STD_USING
 
@@ -31,24 +35,24 @@ BOOST_MATH_GPU_ENABLED T struve_hn(int n, T x, const Policy& pol)
         factor *= (n & 0x1) ? -1 : 1;  // H_{n}(-z) = (-1)^n H_n(z)
         x = -x;
     }
-    //
-    // Special cases:
-    //
-    if(asymptotic_bessel_large_x_limit(T(n), x))
-       return factor * asymptotic_bessel_j_large_x_2<T>(T(n), x, pol);
-    if (n == 0)
-    {
-        return factor * bessel_j0(x);
-    }
-    if (n == 1)
-    {
-        return factor * bessel_j1(x);
-    }
 
-    if (x == 0)                             // n >= 2
+    // TODO: large asymptotic realization
+
+    if (x == 0)
     {
         return static_cast<T>(0);
     }
+    if (n == 0)
+    {
+        return factor * struve_h0(x);
+    }
+    // if (n == 1)
+    // {
+    //     return factor * struve_h1(x);
+    // }
+
+    BOOST_MATH_ASSERT(n > 1);
+    return value;
 }
 
 }}} // namespaces
