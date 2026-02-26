@@ -63,8 +63,8 @@ BOOST_MATH_GPU_ENABLED T struve_h0(T x)
      }
     else                                // x in (3, \infty)
     {
-          T y = 1 / x;
-          T y2 = y * constants::one_div_root_pi<T>();
+          T y = 2 / x;
+          T y2 = y * (1 / pi<T>());
           //
           // What follows is really just:
           //

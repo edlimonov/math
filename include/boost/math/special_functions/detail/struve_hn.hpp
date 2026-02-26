@@ -46,11 +46,13 @@ BOOST_MATH_GPU_ENABLED T struve_hn(int n, T x, const Policy& pol)
     {
         return factor * struve_h0(x);
     }
-    // if (n == 1)
-    // {
-    //     return factor * struve_h1(x);
-    // }
+    if (n == 1)
+    {
+        return factor * struve_h1(x);
+    }
 
+    // here will be struve of order greater then n implementation
+    
     BOOST_MATH_ASSERT(n > 1);
     return value;
 }
