@@ -105,7 +105,7 @@ BOOST_MATH_GPU_ENABLED T struve_hn(int n, T x, const Policy& pol)
         T t1 = numerator / x;
 
         frac *= (x / 2);
-        T denominator = root_pi<T>() * gamma(T(k) + T(1.5));
+        T denominator = root_pi<T>() * tgamma(T(k) + T(1.5));
         T t2 = frac / denominator;
 
         value = t1 + t2 - prev;
