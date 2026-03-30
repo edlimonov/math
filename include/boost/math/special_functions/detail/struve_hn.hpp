@@ -10,6 +10,8 @@
 #include <boost/math/special_functions/detail/struve_h0.hpp>
 #include <boost/math/special_functions/detail/struve_h1.hpp>
 
+#include <iostream>
+
 namespace boost { namespace math { namespace detail{
 
 template <typename T, typename Policy>
@@ -55,7 +57,43 @@ BOOST_MATH_GPU_ENABLED T struve_hn(int n, T x, const Policy& pol)
 
     BOOST_MATH_ASSERT(n > 1);
 
-    // Here is the trivial realization of H_n(x)
+    // large order only
+    // value = (x * constants::e<T>()) / (2 * static_cast<T>(n));
+    // value_powered_n = value;
+
+    // for (int i = 0; i < n - 1; ++i) {
+    //     value_powered_n *= value;
+    // }
+
+    // std::cout << "here\n";
+
+    // value = value_powered_n;
+    // value *= x;
+    // value /= (constants::pi<T>() * static_cast<T>(n) * constants::root_two<T>());
+
+    // if (x <= 1) { // x in (0, 1]
+
+    // } else {
+    //     prev = struve_h0(x);
+    //     current = struve_h1(x);
+    //     T frac(1);
+
+    //     policies::check_series_iterations<T>("boost::math::struve_h_n<%1%>(%1%,%1%)", static_cast<unsigned>(n), pol);
+    //     for (int k = 1; k < n; k++)
+    //     {
+    //         T numerator = 2 * k * current;
+    //         T t1 = numerator / x;
+
+    //         frac *= (x / 2);
+    //         T denominator = root_pi<T>() * gamma(T(k) + T(1.5));
+    //         T t2 = frac / denominator;
+
+    //         value = t1 + t2 - prev;
+    //         prev = current;
+    //         current = value;
+    //     }
+    // }
+
     prev = struve_h0(x);
     current = struve_h1(x);
     T frac(1);
@@ -67,7 +105,7 @@ BOOST_MATH_GPU_ENABLED T struve_hn(int n, T x, const Policy& pol)
         T t1 = numerator / x;
 
         frac *= (x / 2);
-        T denominator = root_pi<T>() * tgamma1pm1(k + 3 / 2);
+        T denominator = root_pi<T>() * gamma(T(k) + T(1.5));
         T t2 = frac / denominator;
 
         value = t1 + t2 - prev;
