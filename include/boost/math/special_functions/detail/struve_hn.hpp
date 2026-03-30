@@ -57,7 +57,7 @@ BOOST_MATH_GPU_ENABLED T struve_hn(int n, T x, const Policy& pol)
 
     // large order only
     value = (x * constants::e<T>()) / (2 * static_cast<T>(n));
-    value_powered_n = value;
+    T value_powered_n = value;
 
     for (int i = 0; i < n - 1; ++i) {
         value_powered_n *= value;
