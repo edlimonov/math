@@ -76,7 +76,7 @@ BOOST_MATH_GPU_ENABLED T struve_hn(int n, T x, const Policy& pol)
 
             u_tmp = u_current;
             v_tmp = v_current;
-            T frac = std::pow(0.5 * x, k + 1) / (root_pi<T>() * gamma(T(k + 1) + T(1.5)));
+            T frac = std::pow(0.5 * x, k + 1) / (root_pi<T>() * boost::math::tgamma(T(k + 1) + T(1.5)));
 
             u_current = -u_next + 2 * ((k + 1) / x) * u_current;
             v_current = -v_next + 2 * ((k + 1) / x) * v_current + frac;
