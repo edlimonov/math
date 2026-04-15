@@ -72,7 +72,7 @@ BOOST_MATH_GPU_ENABLED T struve_hn(int n, T x, const Policy& pol)
     if (x < n) { // backward reccurence
         
         T u_current(1), u_next(0), v_current(0), v_next(0);
-        for (int k = 2 * n; k >= 0; k--) {
+        for (int k = 10 * n; k >= 0; k--) {
 
             u_tmp = u_current;
             v_tmp = v_current;
