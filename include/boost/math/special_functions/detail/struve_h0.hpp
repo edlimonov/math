@@ -33,16 +33,24 @@ template <typename T>
 BOOST_MATH_GPU_ENABLED T struve_h0(T x)
 {
 
-     BOOST_MATH_STATIC const T H0_coeff[] = {
-          static_cast<T>(BOOST_MATH_BIG_CONSTANT(T, 64, 1.909859164)),
-          static_cast<T>(BOOST_MATH_BIG_CONSTANT(T, 64, -1.909855001)),
-          static_cast<T>(BOOST_MATH_BIG_CONSTANT(T, 64, 0.687514637)),
-          static_cast<T>(BOOST_MATH_BIG_CONSTANT(T, 64, -0.126164557)),
-          static_cast<T>(BOOST_MATH_BIG_CONSTANT(T, 64, 0.013828813)),
-          static_cast<T>(BOOST_MATH_BIG_CONSTANT(T, 64, -0.000876918))
-     };
+    BOOST_MATH_STATIC const T P[] = {
+         static_cast<T>(BOOST_MATH_BIG_CONSTANT(T, 64, -0.0707355302630645936750594539914)),
+         static_cast<T>(BOOST_MATH_BIG_CONSTANT(T, 64, 0.00792106043964393838700433537069)),
+         static_cast<T>(BOOST_MATH_BIG_CONSTANT(T, 64, -0.000459347160858328152666975152103)),
+         static_cast<T>(BOOST_MATH_BIG_CONSTANT(T, 64, 0.0000127570704598573950427855592976)),
+         static_cast<T>(BOOST_MATH_BIG_CONSTANT(T, 64, -0.000000177610756112727457308380231305)),
+         static_cast<T>(BOOST_MATH_BIG_CONSTANT(T, 64, 0.00000000100365914526111521466630492207))
+    };
+    BOOST_MATH_STATIC const T Q[] = {
+         static_cast<T>(BOOST_MATH_BIG_CONSTANT(T, 64, 1.0)),
+         static_cast<T>(BOOST_MATH_BIG_CONSTANT(T, 64, 0.0480186462137823940239219913993)),
+         static_cast<T>(BOOST_MATH_BIG_CONSTANT(T, 64, 0.00111562640140860204136655251856)),
+         static_cast<T>(BOOST_MATH_BIG_CONSTANT(T, 64, 0.0000159678117968420435240449310321)),
+         static_cast<T>(BOOST_MATH_BIG_CONSTANT(T, 64, 0.000000144009832908415329312877296644)),
+         static_cast<T>(BOOST_MATH_BIG_CONSTANT(T, 64, 6.73639642330268552035075149213e-10))
+    };
 
-    T value, polynom;
+    T value;
 
     BOOST_MATH_STD_USING
     using namespace boost::math::tools;
@@ -51,17 +59,15 @@ BOOST_MATH_GPU_ENABLED T struve_h0(T x)
     // XXX: correct?
     BOOST_MATH_ASSERT(x > 0); // reflection handled elsewhere.
 
-    if (x <= 3)                       // x in (0, 3]
+    if (x <= 2)                       // x in (0, 2]
     {
-          T y = x / 3;
-          // 
-          // Using evaluate_even_polynomial to have powers:
-          // 0, 2, 4, 6, 8, 10
-          //
-          T polynom = evaluate_even_polynomial(H0_coeff, y);
-          value = y * polynom;
-     }
-    else                                // x in (3, \infty)
+        T y = x * x;
+        T z = y / 4;
+        BOOST_MATH_ASSERT(sizeof(P) == sizeof(Q));
+        T r = evaluate_rational(P, Q, z);
+        value = x * (two_div_pi<T>() + y * r);
+    }
+    else                                // x in (2, \infty)
     {
           T y = 2 / x;
           T y2 = y * (1 / pi<T>());
@@ -81,4 +87,3 @@ BOOST_MATH_GPU_ENABLED T struve_h0(T x)
 }}} // namespaces
 
 #endif // BOOST_MATH_STRUVE_H0_HPP
-
