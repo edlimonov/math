@@ -71,6 +71,26 @@ BOOST_MATH_GPU_ENABLED T struve_h1(T x)
           static_cast<T>(BOOST_MATH_BIG_CONSTANT(T, 64, 4.30336470752717840183185584752e-16)),
           static_cast<T>(BOOST_MATH_BIG_CONSTANT(T, 64, 2.58804113242891615033035260615e-19))
      };
+     BOOST_MATH_STATIC const T P3[] = {
+          static_cast<T>(BOOST_MATH_BIG_CONSTANT(T, 64, 0.0222222222222388033367470463424)),
+          static_cast<T>(BOOST_MATH_BIG_CONSTANT(T, 64, -0.000428150178579328607033936499942)),
+          static_cast<T>(BOOST_MATH_BIG_CONSTANT(T, 64, 0.00000512836366039782167435079993456)),
+          static_cast<T>(BOOST_MATH_BIG_CONSTANT(T, 64, -0.0000000324907078190709864888911278559)),
+          static_cast<T>(BOOST_MATH_BIG_CONSTANT(T, 64, 1.22457551966245954680391025337e-10)),
+          static_cast<T>(BOOST_MATH_BIG_CONSTANT(T, 64, -2.68601960824794604847771418338e-13)),
+          static_cast<T>(BOOST_MATH_BIG_CONSTANT(T, 64, 3.23020170728417424528513321896e-16)),
+          static_cast<T>(BOOST_MATH_BIG_CONSTANT(T, 64, -1.655082993558791425561661665e-19))
+     };
+     BOOST_MATH_STATIC const T Q3[] = {
+          static_cast<T>(BOOST_MATH_BIG_CONSTANT(T, 64, 1.0)),
+          static_cast<T>(BOOST_MATH_BIG_CONSTANT(T, 64, 0.00930467053556493647418484715711)),
+          static_cast<T>(BOOST_MATH_BIG_CONSTANT(T, 64, 0.0000431093550497694878425922752778)),
+          static_cast<T>(BOOST_MATH_BIG_CONSTANT(T, 64, 0.000000130765739214127220510953668506)),
+          static_cast<T>(BOOST_MATH_BIG_CONSTANT(T, 64, 2.85656980866486316472616809132e-10)),
+          static_cast<T>(BOOST_MATH_BIG_CONSTANT(T, 64, 4.60788465567808390776914522226e-13)),
+          static_cast<T>(BOOST_MATH_BIG_CONSTANT(T, 64, 5.27749795480362647662021356161e-16)),
+          static_cast<T>(BOOST_MATH_BIG_CONSTANT(T, 64, 3.56409168076507969865035124728e-19))
+     };
 
     T value;
 
@@ -88,11 +108,18 @@ BOOST_MATH_GPU_ENABLED T struve_h1(T x)
         T r = evaluate_rational(P1, Q1, y);
         value = two_div_pi<T>() * y * (static_cast<T>(1) / 3 - y * r);
     }
-    else if (x <= 8)                  // x in (4, 8]
+    else if (x <= 7)                  // x in (4, 7]
     {
         T y = x * x;
         BOOST_MATH_ASSERT(sizeof(P2) == sizeof(Q2));
         T r = evaluate_rational(P2, Q2, y);
+        value = two_div_pi<T>() * y * (static_cast<T>(1) / 3 - y * r);
+    }
+    else if (x <= 8)                  // x in (7, 8]
+    {
+        T y = x * x;
+        BOOST_MATH_ASSERT(sizeof(P3) == sizeof(Q3));
+        T r = evaluate_rational(P3, Q3, y);
         value = two_div_pi<T>() * y * (static_cast<T>(1) / 3 - y * r);
     }
     else                                // x in (8, \infty)
