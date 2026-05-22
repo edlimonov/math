@@ -35,15 +35,20 @@ BOOST_MATH_GPU_ENABLED T struve_hn(int n, T x, const Policy& pol)
     }
     if(x < 0)
     {
-        factor *= (n & 0x1) ? -1 : 1;  // H_{n}(-z) = (-1)^n H_n(z)
+        factor *= (n & 0x1) ? 1 : -1;  // H_{n}(-z) = (-1)^n H_n(z)
         x = -x;
     }
-
-    // TODO: large asymptotic realization
 
     if (x == 0)
     {
         return static_cast<T>(0);
+    }
+    if (n >= 1000)
+    {
+        T order = static_cast<T>(n);
+        value = exp(order * (static_cast<T>(1) + log(x / (2 * order))));
+        value *= x / (pi<T>() * order * root_two<T>());
+        return factor * value;
     }
     if (n == 0)
     {
@@ -56,23 +61,11 @@ BOOST_MATH_GPU_ENABLED T struve_hn(int n, T x, const Policy& pol)
 
     BOOST_MATH_ASSERT(n > 1);
 
-    // large order only
-    // value = (x * constants::e<T>()) / (2 * static_cast<T>(n));
-    // T value_powered_n = value;
-
-    // for (int i = 0; i < n - 1; ++i) {
-    //     value_powered_n *= value;
-    // }
-
-    // value = value_powered_n;
-    // value *= x;
-    // value /= (constants::pi<T>() * static_cast<T>(n) * constants::root_two<T>());
-
     T u_n, v_n, u_tmp, v_tmp;
     if (x < n) { // backward reccurence
         
         T u_current(1), u_next(0), v_current(0), v_next(0);
-        for (int k = n + 2; k >= 0; k--) {
+        for (int k = 2 * n; k >= 0; k--) {
 
             u_tmp = u_current;
             v_tmp = v_current;
@@ -112,25 +105,6 @@ BOOST_MATH_GPU_ENABLED T struve_hn(int n, T x, const Policy& pol)
             current = value;
         }
     }
-
-    // prev = struve_h0(x);
-    // current = struve_h1(x);
-    // T frac(1);
-
-    // policies::check_series_iterations<T>("boost::math::struve_h_n<%1%>(%1%,%1%)", static_cast<unsigned>(n), pol);
-    // for (int k = 1; k < n; k++)
-    // {
-    //     T numerator = 2 * k * current;
-    //     T t1 = numerator / x;
-
-    //     frac *= (x / 2);
-    //     T denominator = root_pi<T>() * boost::math::tgamma(T(k) + T(1.5));
-    //     T t2 = frac / denominator;
-
-    //     value = t1 + t2 - prev;
-    //     prev = current;
-    //     current = value;
-    // }
     value *= factor;
 
     return value;
