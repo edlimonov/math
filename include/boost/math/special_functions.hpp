@@ -64,6 +64,7 @@
 #include <boost/math/special_functions/sin_pi.hpp>
 #include <boost/math/special_functions/sinc.hpp>
 #include <boost/math/special_functions/sinhc.hpp>
+#include <boost/math/special_functions/struve.hpp>
 #include <boost/math/special_functions/spherical_harmonic.hpp>
 #include <boost/math/special_functions/sqrt1pm1.hpp>
 #include <boost/math/special_functions/zeta.hpp>
